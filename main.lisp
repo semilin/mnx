@@ -3,7 +3,6 @@
   (:export #:new-derivation))
 (in-package :mnx)
 
-
 (defun pacman-query (query)
   (let ((lines (split-sequence #\newline (uiop:run-program (list "pacman" query) :output 'string :ignore-error-status t) :remove-empty-subseqs t)))
     (mapcar (lambda (line)
@@ -53,5 +52,5 @@
   (cond ((/= 0 (sb-posix:geteuid))
 	 (format t "mnx must be run as root.~%")
 	 (uiop:quit 1)))
-  (manage-packages)
+  (if (member "u" (uiop:command-line-arguments) :test #'string-equal) (manage-packages))
   (manage-configs))
