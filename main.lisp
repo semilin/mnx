@@ -34,8 +34,6 @@
     (uiop:run-program (append '("pacman" "-Syyu") (if new (list (format nil "~{~a~^ ~}" new)) ()))
 		      :input :interactive :output :interactive)))
 
-(defun manage-emacs ())
-
 (defun manage-packages ()
   (load "pacman.lisp")
   (manage-pacman))
