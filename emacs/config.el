@@ -57,6 +57,8 @@
   :init
   (setq completion-cycle-threshold 3)
   (setq tab-always-indent 'complete)
+  (setq sentence-end-double-space nil)
+  (savehist-mode 1)
 
   (set-face-background 'mode-line "gray13")
   
@@ -304,8 +306,9 @@ Containing LEFT, and RIGHT aligned respectively."
   :ensure t
   :hook ((lisp-mode emacs-lisp-mode scheme-mode hy-mode) . rainbow-delimiters-mode))
 
-;; (use-package aggressive-indent
-;;   :hook ((lisp-mode emacs-lisp-mode scheme-mode hy-mode) . aggressive-indent-mode))
+(use-package aggressive-indent
+  :ensure t
+  :hook ((lisp-mode emacs-lisp-mode scheme-mode hy-mode) . aggressive-indent-mode))
 
 (use-package magit
   :ensure t
@@ -394,15 +397,17 @@ Containing LEFT, and RIGHT aligned respectively."
   :bind (("C-c l" . gptel-menu))
   :config
   (setq gptel-default-mode 'org-mode)
-  (gptel-make-ollama "Ollama"           
-    :host "localhost:11434"             
-    :stream t                           
-    :models '("mistral:latest" "solar:latest" "zephyr:latest" "starling-lm:latest")))
+  (setq gptel-model "mistral:latest"
+	gptel-backend (gptel-make-ollama "Ollama"           
+			:host "localhost:11434"             
+			:stream t                           
+			:models '("mistral:latest" "solar:latest" "zephyr:latest" "starling-lm:latest"))))
 
-(use-package golden-ratio
+(use-package zoom
   :ensure t
   :config
-  (golden-ratio-mode +1))
+  (setq zoom-size '(0.618 . 0.618))
+  (zoom-mode +1))
   
 (use-package meow
   :ensure t
