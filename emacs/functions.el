@@ -1,7 +1,8 @@
 (defvar guix-custom-dir "/home/semi/code/guix-config/custom/")
 (defvar guix-home-scm "/home/semi/code/guix-config/home.scm")
 
-(require 'plz)
+(use-package plz
+  :ensure t)
 
 (defun semi/guix-home-reconfigure ()
   (interactive)

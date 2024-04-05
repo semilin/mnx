@@ -2,6 +2,12 @@
 		    :font "Iosevka Nerd Font"
 		    :height (round (* 1.0 130)))
 
+(set-face-attribute 'fixed-pitch nil
+		    :font "Iosevka Nerd Font"
+		    :height (round (* 1.0 130)))
+
+(load-file "~/.config/emacs/elpaca.el")
+
 (setq modus-themes-italic-constructs t
       modus-themes-bold-constructs nil
       modus-themes-mixed-fonts t
@@ -53,13 +59,18 @@
         (bg-line-number-inactive bg-main)
         (bg-line-number-active bg-main)))
 
-(load-theme 'modus-vivendi 't)
+(use-package modus-themes
+  :ensure t
+  :init (load-theme 'modus-vivendi 't))
+
 
 (setq default-frame-alist '((cursor-color . "white")
 			    (vertical-scroll-bars . nil)
 			    (font . "Iosevka Nerd Font")))
 
-(load-file "~/.config/emacs/elpaca.el")
+(require 'use-package-ensure)
+(setq use-package-always-ensure t)
+
 (load-file "~/.config/emacs/config.el")
 (load-file "~/.config/emacs/functions.el")
 

@@ -50,7 +50,8 @@
 (font-lock-add-keywords 'lisp-mode
 			`((,*lisp-special-forms* . font-lock-keyword-face)))
 
-(use-package all-the-icons)
+(use-package all-the-icons
+  :ensure t)
 
 (use-package emacs
   :init
@@ -98,32 +99,39 @@ Containing LEFT, and RIGHT aligned respectively."
   :config (setq tramp-default-method "ssh"))
 
 (use-package hy-mode
+  :ensure t
   :mode "\\.hy\\'"
   :defer t)
 
 (use-package rustic
+  :ensure t
   :mode ("\\.rs\\'" . rust-mode)
   :defer t)
 
-(use-package go-mode)
+(use-package go-mode
+  :ensure t)
 
-(use-package sly)
+(use-package sly
+  :ensure t) 
 
 (use-package yaml-mode
   :mode ("\\.yaml\\'" . yaml-mode)
   :defer t)
 
 (use-package company
+  :ensure t
   :config
   (setq company-idle-delay 0)
   :defer t)
 
 (use-package corfu
+  :ensure t
   :custom (corfu-auto t)
   :config
   (global-corfu-mode))
 
 (use-package cape
+  :ensure t
   ;; Bind dedicated completion commands
   ;; Alternative prefix keys: C-c p, M-p, M-+, ...
   :bind (("M-p p" . completion-at-point) ;; capf
@@ -161,6 +169,7 @@ Containing LEFT, and RIGHT aligned respectively."
   )
 
 (use-package tempel
+  :ensure t
   :bind (("M-+" . tempel-complete)
 	 ("M-*" . tempel-insert))
 
@@ -183,6 +192,7 @@ Containing LEFT, and RIGHT aligned respectively."
   :defer t)
 
 (use-package ligature
+  :ensure t
   :hook (prog-mode . ligature-mode)
   :config
   (ligature-set-ligatures '(c-mode rust-mode rust-ts-mode)
@@ -191,27 +201,29 @@ Containing LEFT, and RIGHT aligned respectively."
 			  '("->" "->>" "<>" "<=" ">=" "/=" ";;")))
 
 (use-package vertico
+  :ensure t
   :config (vertico-mode +1))
 
 (use-package vertico-posframe
+  :ensure t
   :init
   (setq vertico-posframe-parameters
 	'((left-fringe . 8)
           (right-fringe . 8)))
   :config (vertico-posframe-mode +1))
 
-(use-package savehist
-  :init (savehist-mode))
-
 (use-package orderless
+  :ensure t
   :init (setq completion-styles '(orderless basic)
 	      completion-category-defaults nil
 	      completion-category-overrides ''(file (styles partial-completion))))
 
 (use-package marginalia
+  :ensure t
   :config (marginalia-mode))
 
 (use-package embark
+  :ensure t
   :bind (("C-." . embark-act)
 	 ("M-." . embark-dwim)
 	 ("C-h B" . embark-bindings))
@@ -223,27 +235,34 @@ Containing LEFT, and RIGHT aligned respectively."
 		 (window-parameters (mode-line-format . none)))))
 
 (use-package consult
+  :ensure t
   :bind (("C-x b" . consult-buffer)
 	 ("C-x p b" . consult-project-buffer)
 	 ("M-y" . consult-yank-pop)))
 
 (use-package embark-consult
+  :ensure t
   :hook (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package which-key
+  :ensure t
   :config
   (setq which-key-idle-delay 0.5)
   (which-key-mode))
 
 (use-package expand-region
+  :ensure t
   :bind ("C-;" . er/expand-region))
 
 (use-package avy
+  :ensure t
   :init (setq avy-keys '(?s ?r ?n ?t ?d ?a ?i ?h ?m ?g))
   :bind ("C-," . avy-goto-word-1))
 
 (use-package dashboard
-  :config (dashboard-setup-startup-hook))
+  :ensure t
+  :config (dashboard-setup-startup-hook)
+  :demand t)
 
 ;; (use-package telephone-line
 ;;   :config (telephone-line-mode +1))
@@ -252,23 +271,28 @@ Containing LEFT, and RIGHT aligned respectively."
 ;;   :hook ((lisp-mode emacs-lisp-mode scheme-mode hy-mode) . paredit-mode))
 
 (use-package puni
+  :ensure t
   :hook ((lisp-mode emacs-lisp-mode scheme-mode hy-mode) . puni-mode)
   :bind (("M-r" . puni-raise)
 	 ("M-s" . puni-splice)
 	 ("C-<backspace>" . puni-backward-kill-word)))
 
 (use-package rainbow-delimiters
+  :ensure t
   :hook ((lisp-mode emacs-lisp-mode scheme-mode hy-mode) . rainbow-delimiters-mode))
 
 ;; (use-package aggressive-indent
 ;;   :hook ((lisp-mode emacs-lisp-mode scheme-mode hy-mode) . aggressive-indent-mode))
 
 (use-package magit
+  :ensure t
   :bind (("C-x g" . magit)))
 
-(use-package projectile)
+(use-package projectile
+  :ensure t)
 
 (use-package diff-hl
+  :ensure t
   :config (global-diff-hl-mode +1))
 
 ;; (use-package scroll-on-jump
@@ -343,6 +367,7 @@ Containing LEFT, and RIGHT aligned respectively."
     :load-path ("~/.config/emacs/combobulate/")))
 
 (use-package meow
+  :ensure t
   :init
   (defconst meow-cheatsheet-layout-semimak-jq
     '((<TLDE> "`" "~")

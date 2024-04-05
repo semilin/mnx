@@ -58,6 +58,7 @@
   :bind (("C-c r u" . org-roam-ui-open)))
 
 (use-package org-super-agenda
+  :ensure t
   :config
   (org-super-agenda-mode)
   (setq org-super-agenda-groups

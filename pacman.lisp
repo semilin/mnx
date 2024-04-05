@@ -10,7 +10,7 @@
      "sfizz"
      "vcvrack-bin"
      "vital-synth")
-
+   '("ttf-iosevka-nerd")
    '("alacritty"
      "alsa-tools"
      "alsa-utils"
@@ -33,6 +33,7 @@
      "drumgizmo"
      "easyeffects"
      "efibootmgr"
+     "emacs"
      "eza"
      "fd"
      "feh"
