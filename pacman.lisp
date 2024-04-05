@@ -119,7 +119,6 @@
      "unzip"
      "vcvrack-bin"
      "vesktop-bin"
-     "vital-synth"
      "vkd3d"
      "vulkan-radeon"
      "vulkan-tools"

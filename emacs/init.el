@@ -6,6 +6,10 @@
 		    :font "Iosevka Nerd Font"
 		    :height (round (* 1.0 130)))
 
+(set-face-attribute 'variable-pitch nil
+		    :font "SourceSans3"
+		    :height (round (* 1.0 130)))
+
 (load-file "~/.config/emacs/elpaca.el")
 
 (setq modus-themes-italic-constructs t
@@ -59,10 +63,13 @@
         (bg-line-number-inactive bg-main)
         (bg-line-number-active bg-main)))
 
-(use-package modus-themes
-  :ensure t
-  :init (load-theme 'modus-vivendi 't))
+;; (use-package modus-themes
+;;   :ensure t
+;;   :init (load-theme 'modus-vivendi 't))
 
+(use-package catppuccin-theme
+  :ensure t
+  :config (load-theme 'catppuccin 't))
 
 (setq default-frame-alist '((cursor-color . "white")
 			    (vertical-scroll-bars . nil)

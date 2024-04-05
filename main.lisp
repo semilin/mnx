@@ -41,7 +41,6 @@
   (load "configs.lisp")
   (loop for (src . dst) in *config-paths*
 	for tmp = (merge-pathnames (file-namestring src) "derivation/")
-	for i upfrom 0
 	do (progn (uiop:copy-file src tmp)
 		  (sb-posix:chmod tmp 444)
 		  (uiop:delete-file-if-exists dst)

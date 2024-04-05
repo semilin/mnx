@@ -4,9 +4,9 @@
 (use-package plz
   :ensure t)
 
-(defun semi/guix-home-reconfigure ()
+(defun semi/mnx ()
   (interactive)
-  (async-shell-command (concat "guix home reconfigure -L " guix-custom-dir " " guix-home-scm) "Guix Home Reconfigure"))
+  (async-shell-command "mnx"))
 
 (defun semi/get-github-repos (user)
   (plz 'get (concat "https://api.github.com/users/" user "repos")

@@ -58,9 +58,8 @@
   (setq completion-cycle-threshold 3)
   (setq tab-always-indent 'complete)
 
-  (set-face-background 'mode-line "gray10")
-  (set-face-background 'mode-line-highlight "gray19")
-
+  (set-face-background 'mode-line "gray13")
+  
   ;; taken from https://www.reddit.com/r/emacs/comments/1333621/wrote_a_custom_modeline_with_some_help_from/
   (defun ntf/mode-line-format (left right)
     "Return a string of `window-width' length.
@@ -93,6 +92,7 @@ Containing LEFT, and RIGHT aligned respectively."
   (setq display-time-string-forms
 	'((propertize (format-time-string "%H:%M") 'face 'bold)))
   (display-time-mode)
+  :bind (("C-o" . other-window))
   )
 
 (use-package tramp
@@ -106,6 +106,8 @@ Containing LEFT, and RIGHT aligned respectively."
 (use-package rustic
   :ensure t
   :mode ("\\.rs\\'" . rust-mode)
+  :init
+  (setq rustic-lsp-client 'eglot)
   :defer t)
 
 (use-package go-mode
@@ -128,7 +130,21 @@ Containing LEFT, and RIGHT aligned respectively."
   :ensure t
   :custom (corfu-auto t)
   :config
-  (global-corfu-mode))
+  (global-corfu-mode)
+  (add-hook 'eshell-mode-hook
+          (lambda ()
+            (setq-local corfu-auto nil)
+            (corfu-mode)))
+
+  (defun corfu-send-shell (&rest _)
+    "Send completion candidate when inside comint/eshell."
+    (cond
+     ((and (derived-mode-p 'eshell-mode) (fboundp 'eshell-send-input))
+      (eshell-send-input))
+     ((and (derived-mode-p 'comint-mode)  (fboundp 'comint-send-input))
+      (comint-send-input))))
+  
+  (advice-add #'corfu-insert :after #'corfu-send-shell))
 
 (use-package cape
   :ensure t
@@ -261,8 +277,15 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (use-package dashboard
   :ensure t
-  :config (dashboard-setup-startup-hook)
-  :demand t)
+  :config
+  (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
+  (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
+  (setq dashboard-startup-banner 'logo)
+  (setq dashboard-center-content t)
+  ;; vertically center content
+  (setq dashboard-vertically-center-content t)
+  :demand t
+  )
 
 ;; (use-package telephone-line
 ;;   :config (telephone-line-mode +1))
@@ -366,6 +389,21 @@ Containing LEFT, and RIGHT aligned respectively."
     ;; code.
     :load-path ("~/.config/emacs/combobulate/")))
 
+(use-package gptel
+  :ensure t
+  :bind (("C-c l" . gptel-menu))
+  :config
+  (setq gptel-default-mode 'org-mode)
+  (gptel-make-ollama "Ollama"           
+    :host "localhost:11434"             
+    :stream t                           
+    :models '("mistral:latest" "solar:latest" "zephyr:latest" "starling-lm:latest")))
+
+(use-package golden-ratio
+  :ensure t
+  :config
+  (golden-ratio-mode +1))
+  
 (use-package meow
   :ensure t
   :init

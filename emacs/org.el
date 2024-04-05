@@ -11,10 +11,14 @@
 				   ("someday.org" :maxlevel . 2)
 				   ("wellbeing.org" :maxlevel . 2))))
   :bind (("C-c c" . org-capture)
-	 ("C-c a" . org-agenda))
-  :hook (org-mode . auto-fill-mode))
+	 ("C-c a" . org-agenda)))
+
+(use-package org-variable-pitch
+  :ensure t
+  :hook ((org-mode . org-variable-pitch-minor-mode)))
 
 (use-package org-modern
+  :ensure t
   :hook ((org-mode . org-modern-mode)
 	 (org-agenda-finalize . org-modern-agenda)))
 
@@ -34,6 +38,7 @@
 ;; 	org-recur-finish-archive t))
 
 (use-package org-roam
+  :ensure t
   :defer t
   :init
   (setq org-roam-v2-ack t)
@@ -48,6 +53,7 @@
 	 ("C-c r r" . org-roam-node-random)))
 
 (use-package org-roam-ui
+  :ensure t
   :defer t
   :init
   (setq org-roam-v2-ack t)
