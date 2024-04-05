@@ -1,1 +1,3 @@
 export EDITOR="emacsclient -c"
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+export PYTORCH_ROCM_ARCH=gfx1030 HSA_OVERRIDE_GFX_VERSION=10.3.0

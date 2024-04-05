@@ -7,9 +7,6 @@ if status is-interactive
     alias ll "ls -l"
     alias l "ls"
     alias e $EDITOR
-    alias ghr "guix home reconfigure -L /home/semi/code/guix-config/custom/ /home/semi/code/guix-config/home.scm"
-    alias ghb "guix home build -L /home/semi/code/guix-config/custom/ /home/semi/code/guix-config/home.scm"
-    alias gsr "sudo -E guix system reconfigure -L /home/semi/code/guix-config/custom/ /home/semi/code/guix-config/system.scm"
     function gs
         guix shell $argv -- fish
     end
