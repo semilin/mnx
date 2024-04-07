@@ -11,7 +11,8 @@
 				   ("someday.org" :maxlevel . 2)
 				   ("wellbeing.org" :maxlevel . 2))))
   :bind (("C-c c" . org-capture)
-	 ("C-c a" . org-agenda)))
+	 ("C-c a" . org-agenda))
+  :hook ((org-mode . org-pretty-entities)))
 
 (use-package org-variable-pitch
   :ensure t

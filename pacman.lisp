@@ -12,11 +12,13 @@
      "vital-synth")
    '("ttf-iosevka-nerd"
      "noto-fonts-cjk"
-     "noto-fonts-emoji")
+     "noto-fonts-emoji"
+     "adobe-source-sans-fonts")
    '("alsa-tools"
      "alsa-utils"
      "amd-ucode"
      "aspell"
+     "pandoc"
      "base"
      "base-devel"
      "bat"

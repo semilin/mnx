@@ -55,11 +55,16 @@
 
 (use-package emacs
   :init
-  (setq completion-cycle-threshold 3)
-  (setq tab-always-indent 'complete)
-  (setq sentence-end-double-space nil)
+  (setq completion-cycle-threshold 3
+	tab-always-indent 'complete
+	sentence-end-double-space nil
+	use-dialog-box nil
+	global-auto-revert-non-file-buffers t)
   (savehist-mode 1)
-
+  (save-place-mode 1)
+  (global-auto-revert-mode 1)
+  (global-visual-line-mode 1)
+  
   (set-face-background 'mode-line "gray13")
   
   ;; taken from https://www.reddit.com/r/emacs/comments/1333621/wrote_a_custom_modeline_with_some_help_from/
@@ -96,6 +101,12 @@ Containing LEFT, and RIGHT aligned respectively."
   (display-time-mode)
   :bind (("C-o" . other-window))
   )
+
+(use-package windmove
+  :bind (("S-<right>" . windmove-right)
+	 ("S-<left>" . windmove-left)
+	 ("S-<up>" . windmove-up)
+	 ("S-<down>" . windmove-down)))
 
 (use-package tramp
   :config (setq tramp-default-method "ssh"))
@@ -203,8 +214,9 @@ Containing LEFT, and RIGHT aligned respectively."
     (setq-local completion-at-point-functions
                 (cons #'tempel-expand
                       completion-at-point-functions)))
-  :hook ((prog-mode . tempel-setup-capf)
-	 (text-mode . tempel-setup-capf)))
+  (add-hook 'conf-mode-hook 'tempel-setup-capf)
+  (add-hook 'prog-mode-hook 'tempel-setup-capf)
+  (add-hook 'text-mode-hook 'tempel-setup-capf))
 
 (use-package eglot
   :defer t)
@@ -397,18 +409,23 @@ Containing LEFT, and RIGHT aligned respectively."
   :bind (("C-c l" . gptel-menu))
   :config
   (setq gptel-default-mode 'org-mode)
+  (gptel-make-gemini "Gemini" :key "AIzaSyBHAs8HqdNNlyfVGsxu1HRyukoysjoJFLY" :stream t)
   (setq gptel-model "mistral:latest"
 	gptel-backend (gptel-make-ollama "Ollama"           
 			:host "localhost:11434"             
 			:stream t                           
-			:models '("mistral:latest" "solar:latest" "zephyr:latest" "starling-lm:latest"))))
+			:models '("mistral:latest" "solar:latest" "zephyr:latest" "starling-lm:latest" "gemma:latest"))))
 
 (use-package zoom
   :ensure t
   :config
   (setq zoom-size '(0.618 . 0.618))
   (zoom-mode +1))
-  
+
+(use-package denote
+  :ensure t
+  :custom (denote-directory "~/doc/denote/"))
+
 (use-package meow
   :ensure t
   :init
