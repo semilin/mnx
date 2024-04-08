@@ -409,7 +409,6 @@ Containing LEFT, and RIGHT aligned respectively."
   :bind (("C-c l" . gptel-menu))
   :config
   (setq gptel-default-mode 'org-mode)
-  (gptel-make-gemini "Gemini" :key "AIzaSyBHAs8HqdNNlyfVGsxu1HRyukoysjoJFLY" :stream t)
   (setq gptel-model "mistral:latest"
 	gptel-backend (gptel-make-ollama "Ollama"           
 			:host "localhost:11434"             
