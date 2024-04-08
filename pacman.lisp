@@ -36,6 +36,7 @@
      "easyeffects"
      "efibootmgr"
      "emacs"
+     "etterna"
      "eza"
      "fd"
      "feh"

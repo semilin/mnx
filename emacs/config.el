@@ -81,8 +81,8 @@ Containing LEFT, and RIGHT aligned respectively."
 			   (quote
 			    ((:eval (let* ((ind (substring (meow-indicator) 1 2))
 					   (colors (if (string= ind "I")
-						       '("medium spring green" "black")
-						     '("purple" "white"))))
+						       '("#a6e3a1" "black")
+						     '("#cba6f7" "black"))))
 				      (propertize (concat " " ind " ") 'face `(:background ,(car colors) :foreground ,(cadr colors)))))
 			     " %* "
 			     (:eval (propertize "%b " 'face 'bold))
