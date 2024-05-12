@@ -1,11 +1,17 @@
 (setq use-package-always-ensure nil)
 
-(setq backup-directory-alist `(("." . "~/.config/emacs/saves")))
+(setq backup-directory-alist
+      `((".*" . "~/.config/emacs/backups"))
+      auto-save-file-name-transforms
+      `((".*" "~/.config/emacs/auto-saves")))
 (setq backup-by-copying t)
 (setq delete-old-versions t
       kept-new-version 6
       kept-old-version 2
       version-control t)
+
+(setq-default indent-tabs-mode nil
+              tab-width 2)
 
 (use-package proced
   :ensure nil
@@ -24,9 +30,9 @@
 
 
 (add-hook 'prog-mode-hook (lambda ()
-			    (setq display-line-numbers-type 'relative)
-			    (display-line-numbers-mode)
-			    (electric-pair-mode)))
+			                      (setq display-line-numbers-type 'relative)
+			                      (display-line-numbers-mode)
+			                      (electric-pair-mode)))
 
 :::cl
 ;; fontify doc strings in correct face
@@ -37,18 +43,18 @@
 
 (defvar *lisp-special-forms*
   (regexp-opt '("defvar*"
-		"defconstant*"
-		"defparameter*"
-		"defgeneric*"
-		"defmethod*"
-		"defun*"
-		"lambda*"
-		"flet*"
-		"labels*")
-	      'words))
+		            "defconstant*"
+		            "defparameter*"
+		            "defgeneric*"
+		            "defmethod*"
+		            "defun*"
+		            "lambda*"
+		            "flet*"
+		            "labels*")
+	            'words))
 
 (font-lock-add-keywords 'lisp-mode
-			`((,*lisp-special-forms* . font-lock-keyword-face)))
+			                  `((,*lisp-special-forms* . font-lock-keyword-face)))
 
 (use-package all-the-icons
   :ensure t)
@@ -56,10 +62,10 @@
 (use-package emacs
   :init
   (setq completion-cycle-threshold 3
-	tab-always-indent 'complete
-	sentence-end-double-space nil
-	use-dialog-box nil
-	global-auto-revert-non-file-buffers t)
+	      tab-always-indent 'complete
+	      sentence-end-double-space nil
+	      use-dialog-box nil
+	      global-auto-revert-non-file-buffers t)
   (savehist-mode 1)
   (save-place-mode 1)
   (global-auto-revert-mode 1)
@@ -75,56 +81,62 @@ Containing LEFT, and RIGHT aligned respectively."
       (format (format "%%s %%%ds " available-width) left right)))
 
   (setq-default mode-line-format
-		'((:eval (ntf/mode-line-format
-			  ;; left
-			  (format-mode-line
-			   (quote
-			    ((:eval (let* ((ind (substring (meow-indicator) 1 2))
-					   (colors (if (string= ind "I")
-						       '("#a6e3a1" "black")
-						     '("#cba6f7" "black"))))
-				      (propertize (concat " " ind " ") 'face `(:background ,(car colors) :foreground ,(cadr colors)))))
-			     " %* "
-			     (:eval (propertize "%b " 'face 'bold))
-			     "%m "
-			     "%l:%c "
-			     mode-line-percent-position
-			     "%%")))
-			  ;; right
-			  (format-mode-line (quote ((:eval (when (org-clock-is-active)
-							     (org-clock-get-clock-string)))
-						    (vc-mode vc-mode))))
-			  ))))
+		            '((:eval (ntf/mode-line-format
+			                    ;; left
+			                    (format-mode-line
+			                     (quote
+			                      ((:eval (let* ((ind (substring (meow-indicator) 1 2))
+					                                 (colors (if (string= ind "I")
+						                                           '("#a6e3a1" "black")
+						                                         '("#cba6f7" "black"))))
+				                              (propertize (concat " " ind " ") 'face `(:background ,(car colors) :foreground ,(cadr colors)))))
+			                       " %* "
+			                       (:eval (propertize "%b " 'face 'bold))
+			                       "%m "
+			                       "%l:%c "
+			                       mode-line-percent-position
+			                       "%%")))
+			                    ;; right
+			                    (format-mode-line (quote ((:eval (when (org-clock-is-active)
+							                                               (org-clock-get-clock-string)))
+						                                        (vc-mode vc-mode))))
+			                    ))))
 
   (setq display-time-string-forms
-	'((propertize (format-time-string "%H:%M") 'face 'bold)))
+	      '((propertize (format-time-string "%H:%M") 'face 'bold)))
   (display-time-mode)
   :bind (("C-o" . other-window))
   )
 
 (use-package windmove
   :bind (("S-<right>" . windmove-right)
-	 ("S-<left>" . windmove-left)
-	 ("S-<up>" . windmove-up)
-	 ("S-<down>" . windmove-down)))
+	       ("S-<left>" . windmove-left)
+	       ("S-<up>" . windmove-up)
+	       ("S-<down>" . windmove-down)))
 
 (use-package tramp
   :config (setq tramp-default-method "ssh"))
+
+(use-package age
+  :ensure t
+  :config
+  (age-file-enable)
+  :custom
+  (age-program "rage"))
 
 (use-package hy-mode
   :ensure t
   :mode "\\.hy\\'"
   :defer t)
 
-(use-package rustic
+(use-package rust-mode
   :ensure t
-  :mode ("\\.rs\\'" . rust-mode)
   :init
-  (setq rustic-lsp-client 'eglot)
-  :defer t)
+  (setq rust-mode-treesitter-derive t))
 
 (use-package go-mode
-  :ensure t)
+  :ensure t
+  :hook (go-mode . indent-tabs-mode))
 
 (use-package sly
   :ensure t) 
@@ -145,9 +157,9 @@ Containing LEFT, and RIGHT aligned respectively."
   :config
   (global-corfu-mode)
   (add-hook 'eshell-mode-hook
-          (lambda ()
-            (setq-local corfu-auto nil)
-            (corfu-mode)))
+            (lambda ()
+              (setq-local corfu-auto nil)
+              (corfu-mode)))
 
   (defun corfu-send-shell (&rest _)
     "Send completion candidate when inside comint/eshell."
@@ -200,7 +212,7 @@ Containing LEFT, and RIGHT aligned respectively."
 (use-package tempel
   :ensure t
   :bind (("M-+" . tempel-complete)
-	 ("M-*" . tempel-insert))
+	       ("M-*" . tempel-insert))
 
   :init
   (defun tempel-setup-capf ()
@@ -219,16 +231,24 @@ Containing LEFT, and RIGHT aligned respectively."
   (add-hook 'text-mode-hook 'tempel-setup-capf))
 
 (use-package eglot
-  :defer t)
+  :defer t
+  :bind (("C-c C-l C-l" . eglot)
+         ("C-c C-l C-r" . eglot-reconnect)
+         ("C-c C-l C-h" . eglot-inlay-hints-mode)
+         ("C-c C-l C-i" . eglot-code-action-organize-imports)
+         ("C-c C-l C-p" . eglot-find-implementation)
+         ("C-c C-l C-t" . eglot-find-typeDefinition)
+         ("C-c C-l C-d" . eglot-find-declaration)
+         ("C-c C-l C-a" . eglot-code-actions)))
 
 (use-package ligature
   :ensure t
   :hook (prog-mode . ligature-mode)
   :config
   (ligature-set-ligatures '(c-mode rust-mode rust-ts-mode)
-			  '("->" "==" "!=" "<=" ">=" "=>" "/*" "*/"))
+			                    '("->" "==" "!=" "<=" ">=" "=>" "/*" "*/"))
   (ligature-set-ligatures '(lisp-mode sly-mrepl-mode sly-mode)
-			  '("->" "->>" "<>" "<=" ">=" "/=" ";;")))
+			                    '("->" "->>" "<>" "<=" ">=" "/=" ";;")))
 
 (use-package vertico
   :ensure t
@@ -238,37 +258,49 @@ Containing LEFT, and RIGHT aligned respectively."
   :ensure t
   :init
   (setq vertico-posframe-parameters
-	'((left-fringe . 8)
+	      '((left-fringe . 8)
           (right-fringe . 8)))
   :config (vertico-posframe-mode +1))
 
 (use-package orderless
   :ensure t
   :init (setq completion-styles '(orderless basic)
-	      completion-category-defaults nil
-	      completion-category-overrides ''(file (styles partial-completion))))
+	            completion-category-defaults nil
+	            completion-category-overrides ''(file (styles partial-completion))))
 
 (use-package marginalia
   :ensure t
   :config (marginalia-mode))
 
+(use-package nerd-icons-completion
+  :ensure t
+  :after marginalia
+  :config
+  (nerd-icons-completion-mode)
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+
+(use-package all-the-icons-dired
+  :ensure t
+  :after all-the-icons
+  :hook (dired-mode . all-the-icons-dired-mode))
+
 (use-package embark
   :ensure t
   :bind (("C-." . embark-act)
-	 ("M-." . embark-dwim)
-	 ("C-h B" . embark-bindings))
+	       ("M-." . embark-dwim)
+	       ("C-h B" . embark-bindings))
   :init (setq prefix-help-command #'embark-prefix-help-command)
   :config
   (add-to-list 'display-buffer-alist
-	       '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-		 nil
-		 (window-parameters (mode-line-format . none)))))
+	             '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+		             nil
+		             (window-parameters (mode-line-format . none)))))
 
 (use-package consult
   :ensure t
   :bind (("C-x b" . consult-buffer)
-	 ("C-x p b" . consult-project-buffer)
-	 ("M-y" . consult-yank-pop)))
+	       ("C-x p b" . consult-project-buffer)
+	       ("M-y" . consult-yank-pop)))
 
 (use-package embark-consult
   :ensure t
@@ -311,8 +343,8 @@ Containing LEFT, and RIGHT aligned respectively."
   :ensure t
   :hook ((lisp-mode emacs-lisp-mode scheme-mode hy-mode) . puni-mode)
   :bind (("M-r" . puni-raise)
-	 ("M-s" . puni-splice)
-	 ("C-<backspace>" . puni-backward-kill-word)))
+	       ("M-s" . puni-splice)
+	       ("C-<backspace>" . puni-backward-kill-word)))
 
 (use-package rainbow-delimiters
   :ensure t
@@ -347,20 +379,27 @@ Containing LEFT, and RIGHT aligned respectively."
 (load-file "/home/semi/.config/emacs/org.el")
 ;; (load-file "/home/semi/.config/emacs/elfeed.el")
 
-;; `M-x combobulate' (or `C-c o o') to start using Combobulate
-;; pretty sure this doesn't work at all :grofl:
+;; `M-x combobulate' (default: `C-c o o') to start using Combobulate
 (use-package treesit
+  :mode (("\\.tsx\\'" . tsx-ts-mode))
   :preface
   (defun mp-setup-install-grammars ()
     "Install Tree-sitter grammars if they are absent."
     (interactive)
     (dolist (grammar
-             '((css "https://github.com/tree-sitter/tree-sitter-css")
-               (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "master" "src"))
-               (python "https://github.com/tree-sitter/tree-sitter-python")
-	       (rust "https://github.com/tree-sitter/tree-sitter-rust")
-	       (c "https://github.com/tree-sitter/tree-sitter-c")
-               (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))))
+             '((css . ("https://github.com/tree-sitter/tree-sitter-css" "v0.20.0"))
+               (html . ("https://github.com/tree-sitter/tree-sitter-html" "v0.20.1"))
+               (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "v0.20.1" "src"))
+               (json . ("https://github.com/tree-sitter/tree-sitter-json" "v0.20.2"))
+	             (python . ("https://github.com/tree-sitter/tree-sitter-python" "v0.20.4"))
+               (toml "https://github.com/tree-sitter/tree-sitter-toml")
+               (bash "https://github.com/tree-sitter/tree-sitter-bash")
+               (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src"))
+               (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src"))
+               (yaml . ("https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0"))
+               (go "https://github.com/tree-sitter/tree-sitter-go")
+               (c "https://github.com/tree-sitter/tree-sitter-c")
+               (cpp "https://github.com/tree-sitter/tree-sitter-cpp")))
       (add-to-list 'treesit-language-source-alist grammar)
       ;; Only install `grammar' if we don't already have it
       ;; installed. However, if you want to *update* a grammar then
@@ -374,35 +413,50 @@ Containing LEFT, and RIGHT aligned respectively."
   ;; You can remap major modes with `major-mode-remap-alist'. Note
   ;; that this does *not* extend to hooks! Make sure you migrate them
   ;; also
-  (dolist (mapping '((python-mode . python-ts-mode)
-                     (css-mode . css-ts-mode)
-                     (typescript-mode . tsx-ts-mode)
-                     (js-mode . js-ts-mode)
-                     (css-mode . css-ts-mode)
-		     (c-mode . c-ts-mode)
-		     (rust-mode . rust-ts-mode)))
+  (dolist (mapping
+           '((python-mode . python-ts-mode)
+             (css-mode . css-ts-mode)
+             (typescript-mode . typescript-ts-mode)
+             (js2-mode . js-ts-mode)
+             (bash-mode . bash-ts-mode)
+             (css-mode . css-ts-mode)
+             (json-mode . json-ts-mode)
+	           (go-mode . go-ts-mode)
+             (js-json-mode . json-ts-mode)))
     (add-to-list 'major-mode-remap-alist mapping))
-
   :config
   (mp-setup-install-grammars)
   ;; Do not forget to customize Combobulate to your liking:
   ;;
   ;;  M-x customize-group RET combobulate RET
   ;;
-  (use-package combobulate
-    ;; Optional, but recommended.
-    ;;
-    ;; You can manually enable Combobulate with `M-x
-    ;; combobulate-mode'.
-    :hook ((python-ts-mode . combobulate-mode)
-           (js-ts-mode . combobulate-mode)
-           (css-ts-mode . combobulate-mode)
-           (yaml-ts-mode . combobulate-mode)
-           (typescript-ts-mode . combobulate-mode)
-           (tsx-ts-mode . combobulate-mode))
-    ;; Amend this to the directory where you keep Combobulate's source
-    ;; code.
-    :load-path ("~/.config/emacs/combobulate/")))
+  )
+
+(use-package combobulate
+  :ensure (:host github :repo "mickeynp/combobulate")
+  :preface
+  ;; You can customize Combobulate's key prefix here.
+  ;; Note that you may have to restart Emacs for this to take effect!
+  (setq combobulate-key-prefix "C-c o")
+
+  ;; Optional, but recommended.
+  ;;
+  ;; You can manually enable Combobulate with `M-x
+  ;; combobulate-mode'.
+  :hook
+  ((python-ts-mode . combobulate-mode)
+   (js-ts-mode . combobulate-mode)
+   (html-ts-mode . combobulate-mode)
+   (css-ts-mode . combobulate-mode)
+   (yaml-ts-mode . combobulate-mode)
+   (typescript-ts-mode . combobulate-mode)
+   (json-ts-mode . combobulate-mode)
+   (tsx-ts-mode . combobulate-mode)))
+
+;; (use-package treesitter-context
+;;   :ensure (:host github :repo "zbelial/treesitter-context.el")
+;;   :hook ((rust-ts-mode . treesitter-context-mode)
+;;          (rust-ts-mode . treesitter-context-focus-mode)))
 
 (use-package gptel
   :ensure t
@@ -410,10 +464,26 @@ Containing LEFT, and RIGHT aligned respectively."
   :config
   (setq gptel-default-mode 'org-mode)
   (setq gptel-model "mistral:latest"
-	gptel-backend (gptel-make-ollama "Ollama"           
-			:host "localhost:11434"             
-			:stream t                           
-			:models '("mistral:latest" "solar:latest" "zephyr:latest" "starling-lm:latest" "gemma:latest"))))
+	      gptel-backend (gptel-make-ollama "Ollama"           
+			                  :host "localhost:11434"             
+			                  :stream t                           
+			                  :models '("mistral:latest" "solar:latest" "zephyr:latest" "starling-lm:latest" "gemma:latest" "llama3:latest"))))
+
+(use-package activities
+  :ensure t
+  :init
+  (activities-mode)
+  (activities-tabs-mode)
+  :bind (("C-c v n" . activities-new)
+	       ("C-c v d" . activities-define)
+	       ("C-c v v" . activities-resume)
+	       ("C-c v s" . activities-suspend)
+	       ("C-c v k" . activities-kill)
+	       ("C-c v /" . activities-switch)
+	       ("C-c v b" . activities-switch-buffer)
+	       ("C-c v f" . activities-switch-buffer)
+	       ("C-c v g" . activities-revert)
+	       ("C-c v l" . activities-list)))
 
 (use-package zoom
   :ensure t

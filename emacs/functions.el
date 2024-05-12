@@ -1,6 +1,3 @@
-(defvar guix-custom-dir "/home/semi/code/guix-config/custom/")
-(defvar guix-home-scm "/home/semi/code/guix-config/home.scm")
-
 (use-package plz
   :ensure t)
 
@@ -9,11 +6,17 @@
   (async-shell-command "mnx"))
 
 (defun semi/get-github-repos (user)
-  (plz 'get (concat "https://api.github.com/users/" user "repos")
+  (plz 'get (concat "https://api.github.com/users/" user "/repos" "?sort=pushed")
     :headers '(("Accept" . "application/vnd.github+json")
-	       ("X-GitHub-Api-Version: 2022-11-28"))
+	             ("X-GitHub-Api-Version" . "2022-11-28"))
+    
     :as #'json-read))
 
-(defun semi/clone-own-github-ssh (name)
-  (interactive "sRepo name: \n")
-  (async-shell-command (concat "git clone git@github.com:semilin/" name ".git")))
+(defun semi/clone-own-github-ssh ()
+  (interactive)
+  (let ((repos (mapcar (lambda (repo)
+                         (cdr (assq 'name repo)))
+                       (semi/get-github-repos "semilin"))))
+    (async-shell-command (concat "git clone git@github.com:semilin/"
+                                 (completing-read "Choose repo to clone:" repos)
+                                 ".git"))))
