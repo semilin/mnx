@@ -1,14 +1,18 @@
-(set-face-attribute 'default nil
-		    :font "Iosevka Nerd Font"
-		    :height (round (* 1.0 130)))
+(let ((scale 1.0))
+  (set-face-attribute 'default nil
+		                  :font "Iosevka Nerd Font"
+		                  :height (round (* scale 120)))
 
-(set-face-attribute 'fixed-pitch nil
-		    :font "Iosevka Nerd Font"
-		    :height (round (* 1.0 130)))
+  (set-face-attribute 'fixed-pitch nil
+		                  :font "Iosevka Nerd Font"
+		                  :height (round (* scale 120)))
 
-(set-face-attribute 'variable-pitch nil
-		    :font "SourceSans3"
-		    :height (round (* 1.0 130)))
+  (set-face-attribute 'variable-pitch nil
+		                  :font "SourceSans3"
+		                  :height (round (* scale 120))))
+
+(defvar default-font "Iosevka Nerd Font")
+(add-to-list 'default-frame-alist `(font . ,default-font))
 
 (load-file "~/.config/emacs/elpaca.el")
 

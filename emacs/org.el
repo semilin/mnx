@@ -54,14 +54,9 @@
   :init
   (setq org-roam-v2-ack t)
   :custom
-  (org-roam-directory (file-truename "~/org/roam"))
+  (org-roam-directory "/home/semi/org/nodes")
   :config
-  (require 'org-roam-protocol)
-  :bind (("C-c r u" . org-roam-ui-open)
-         ("C-c r u" . org-roam-buffer-toggle)
-         ("C-c r f" . org-roam-node-find)
-         ("C-c r i" . org-roam-node-insert)
-         ("C-c r r" . org-roam-node-random)))
+  (require 'org-roam-protocol))
 
 (use-package org-roam-ui
   :ensure t
@@ -69,13 +64,21 @@
   :init
   (setq org-roam-v2-ack t)
   :custom
-  (org-roam-directory (file-truename "~/org/roam"))
+  (org-roam-directory (file-truename "~/org/nodes"))
   :config
   (require 'org-roam-protocol)
   :bind (("C-c r u" . org-roam-ui-open)))
 
 (use-package org-node
   :ensure (:host github :repo "meedstrom/org-node")
+  :hook ((org-mode . org-node-cache-mode)
+         (org-mode . org-node-backlink-mode))
+  :config
+  (setq org-node-extra-id-dirs '("~/org/nodes")
+        org-node-extra-id-dirs-exclude '(".sync-conflict-" "/archive/"))
+  :bind (("C-c n f" . org-node-find)
+         ("C-c n i" . org-node-insert-link)
+         ("C-c n r" . org-node-random))
   :after org)
 
 (use-package org-super-agenda

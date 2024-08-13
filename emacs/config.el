@@ -9,6 +9,7 @@
       kept-new-version 6
       kept-old-version 2
       version-control t)
+(setq create-lockfiles nil)
 
 (setq-default indent-tabs-mode nil
               tab-width 2)
@@ -70,6 +71,9 @@
   (save-place-mode 1)
   (global-auto-revert-mode 1)
   (global-visual-line-mode 1)
+
+  (setf use-default-font-for-symbols nil)
+  (set-fontset-font t 'unicode "Noto Emoji" nil 'append)
   
   (set-face-background 'mode-line "gray13")
   
@@ -134,21 +138,28 @@ Containing LEFT, and RIGHT aligned respectively."
   :init
   (setq rust-mode-treesitter-derive t))
 
+(use-package c3-ts-mode
+  :ensure (:repo "https://github.com/c3lang/c3-ts-mode")
+  :config
+  (setq c3-ts-mode-indent-offset 2)
+  (setq treesit-font-lock-level 4))
+
+(use-package wgsl-mode
+  :ensure t)
+
 (use-package go-mode
   :ensure t
   :hook (go-mode . indent-tabs-mode))
 
+(use-package markdown-mode
+  :ensure t)
+
 (use-package sly
   :ensure t) 
 
-(use-package yaml-mode
-  :mode ("\\.yaml\\'" . yaml-mode)
-  :defer t)
-
-(use-package company
-  :ensure t
-  :config
-  (setq company-idle-delay 0)
+(use-package yaml
+  :mode (("\\.yaml\\'" . yaml-ts-mode)
+         ("\\.yml\\'" . yaml-ts-mode))
   :defer t)
 
 (use-package corfu
@@ -156,6 +167,8 @@ Containing LEFT, and RIGHT aligned respectively."
   :custom (corfu-auto t)
   :config
   (global-corfu-mode)
+  (setq corfu-auto-delay 0.0)
+
   (add-hook 'eshell-mode-hook
             (lambda ()
               (setq-local corfu-auto nil)
@@ -191,6 +204,9 @@ Containing LEFT, and RIGHT aligned respectively."
          ("M-p &" . cape-sgml)
          ("M-p r" . cape-rfc1345))
   :init
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (setq completion-at-point-functions '(#'cape-file))))
   ;; Add to the global default value of `completion-at-point-functions' which is
   ;; used by `completion-at-point'.  The order of the functions matters, the
   ;; first function returning a result wins.  Note that the list of buffer-local
@@ -239,7 +255,15 @@ Containing LEFT, and RIGHT aligned respectively."
          ("C-c C-l C-p" . eglot-find-implementation)
          ("C-c C-l C-t" . eglot-find-typeDefinition)
          ("C-c C-l C-d" . eglot-find-declaration)
-         ("C-c C-l C-a" . eglot-code-actions)))
+         ("C-c C-l C-a" . eglot-code-actions))
+  :config
+  (add-to-list 'eglot-server-programs
+               '((rust-ts-mode rust-mode) .
+                 ("rust-analyzer" :initializationOptions
+                  (
+                   :check (:command "clippy" :features "all")
+                   :cargo (:features "all"))
+                  ))))
 
 (use-package ligature
   :ensure t
@@ -284,6 +308,9 @@ Containing LEFT, and RIGHT aligned respectively."
   :after all-the-icons
   :hook (dired-mode . all-the-icons-dired-mode))
 
+(use-package dired-open-with
+  :ensure (:host github :repo "FrostyX/dired-open-with"))
+
 (use-package embark
   :ensure t
   :bind (("C-." . embark-act)
@@ -300,7 +327,33 @@ Containing LEFT, and RIGHT aligned respectively."
   :ensure t
   :bind (("C-x b" . consult-buffer)
 	       ("C-x p b" . consult-project-buffer)
-	       ("M-y" . consult-yank-pop)))
+	       ("M-y" . consult-yank-pop)
+         ("M-g g" . consult-goto-line)
+         ("M-g ," . consult-line)
+         ("M-g i" . consult-imenu)
+         ("M-g I" . consult-imenu-multi)
+         ("M-g m" . consult-mark)
+         ("M-g o" . consult-outline)
+         ("M-g e" . consult-compile-error)
+         ("M-s d" . consult-fd)
+         ("M-s c" . consult-locate)
+         ("M-s g" . consult-grep)
+         ("M-s G" . consult-git-grep)
+         ("M-s r" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
+         ("M-s k" . consult-keep-lines)
+         ("M-s u" . consult-focus-lines)
+         ("M-s e" . consult-isearch-history)
+         :map isearch-mode-map
+         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+         ;; Minibuffer history
+         :map minibuffer-local-map
+         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
+         ("M-r" . consult-history)))
 
 (use-package embark-consult
   :ensure t
@@ -318,7 +371,7 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (use-package avy
   :ensure t
-  :init (setq avy-keys '(?s ?r ?n ?t ?d ?a ?i ?h ?m ?g))
+  :init (setq avy-keys '(?s ?r ?n ?t ?d ?a ?i ?h ?m ?g ?l ?o ?b ?, ?j ?>))
   :bind ("C-," . avy-goto-word-1))
 
 (use-package dashboard
@@ -341,10 +394,8 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (use-package puni
   :ensure t
-  :hook ((lisp-mode emacs-lisp-mode scheme-mode hy-mode) . puni-mode)
-  :bind (("M-r" . puni-raise)
-	       ("M-s" . puni-splice)
-	       ("C-<backspace>" . puni-backward-kill-word)))
+  :hook ((prog-mode) . puni-mode)
+  :bind (("C-<backspace>" . puni-backward-kill-word)))
 
 (use-package rainbow-delimiters
   :ensure t
@@ -399,7 +450,8 @@ Containing LEFT, and RIGHT aligned respectively."
                (yaml . ("https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0"))
                (go "https://github.com/tree-sitter/tree-sitter-go")
                (c "https://github.com/tree-sitter/tree-sitter-c")
-               (cpp "https://github.com/tree-sitter/tree-sitter-cpp")))
+               (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
+               (c3 "https://github.com/c3lang/tree-sitter-c3")))
       (add-to-list 'treesit-language-source-alist grammar)
       ;; Only install `grammar' if we don't already have it
       ;; installed. However, if you want to *update* a grammar then
@@ -463,11 +515,56 @@ Containing LEFT, and RIGHT aligned respectively."
   :bind (("C-c l" . gptel-menu))
   :config
   (setq gptel-default-mode 'org-mode)
-  (setq gptel-model "mistral:latest"
+  (setq gptel-model "gemma2:latest"
 	      gptel-backend (gptel-make-ollama "Ollama"           
-			                  :host "localhost:11434"             
+			                  :host "localhost:11434"            
 			                  :stream t                           
-			                  :models '("mistral:latest" "solar:latest" "zephyr:latest" "starling-lm:latest" "gemma:latest" "llama3:latest"))))
+			                  :models '("gemma2:latest" "llama3:latest"))))
+
+(use-package consult-omni
+  :ensure (:host github :repo "armindarvish/consult-omni" :branch "main")
+  :after consult
+  :custom
+  ;; General settings that apply to all sources
+  (consult-omni-show-preview t) ;;; show previews
+  (consult-omni-preview-key "C-o") ;;; set the preview key to C-o
+  :config
+  ;; Load Sources Core code
+  (require 'consult-omni-sources)
+  ;; Load Embark Actions
+  (require 'consult-omni-embark)
+
+  ;; Only load wikipedia source
+  (setq consult-omni-sources-modules-to-load (list 'consult-omni-calc 'consult-omni-gptel 'consult-omni-fd 'consult-omni-wikipedia))
+  (consult-omni-sources-load-modules)
+
+  (setq consult-omni-multi-sources '("calc" "Org Agenda" "Wikipedia"))
+
+  ;;; Set your shorthand favorite interactive command
+  (setq consult-omni-default-interactive-command #'consult-omni-wikipedia))
+
+;; (use-package elisa
+;;   :init
+;;   (setopt elisa-limit 5)
+;;   ;; reranker increases answer quality significantly
+;;   (setopt elisa-reranker-enabled t)
+;;   ;; prompt rewriting may increase quality of answers
+;;   ;; disable it if you want direct control over prompt
+;;   (setopt elisa-prompt-rewriting-enabled t)
+;;   (require 'llm-ollama)
+;;   ;; gemma 2 works very good in my use cases
+;;   ;; it also boasts strong multilingual capabilities
+;;   (setopt elisa-chat-provider
+;; 	        (make-llm-ollama
+;; 	         :chat-model "gemma2:9b-instruct-q6_K"
+;; 	         :embedding-model "chatfire/bge-m3:q8_0"
+;; 	         ;; set context window to 8k
+;; 	         :default-chat-non-standard-params '(("num_ctx" . 8192))))
+;;   ;; this embedding model has stong multilingual capabilities
+;;   (setopt elisa-embeddings-provider (make-llm-ollama :embedding-model "chatfire/bge-m3:q8_0"))
+;;   :config
+;;   ;; searxng works better than duckduckgo in my tests
+;;   (setopt elisa-web-search-function 'elisa-search-searxng))
 
 (use-package activities
   :ensure t
@@ -488,7 +585,7 @@ Containing LEFT, and RIGHT aligned respectively."
 (use-package zoom
   :ensure t
   :config
-  (setq zoom-size '(0.618 . 0.618))
+  (setq zoom-size '(0.55 . 0.55))
   (zoom-mode +1))
 
 (use-package denote
@@ -632,6 +729,12 @@ Containing LEFT, and RIGHT aligned respectively."
      '("y" . meow-save)
      '("z" . meow-pop-selection)
      '("'" . repeat)
+     '("(" . puni-backward-sexp)
+     '(")" . puni-forward-sexp)
+     '("^ s" . puni-splice)
+     '("^ r" . puni-raise)
+     '("^ b" . puni-barf-forward)
+     '("^ l" . puni-slurp-forward)
      '("<escape>" . ignore)))
   :config
   (meow-setup)

@@ -4,8 +4,8 @@ bar:
   height: 20
   location: top
   font: base_font
-  spacing: 2
-  margin: 0
+  spacing: 10
+  margin: 10
   layer: bottom
   foreground: cdd6f4ff
   background: 181825ff
@@ -59,9 +59,30 @@ bar:
                   <<: *river_base
                   deco: {underline: {size: 3, color: 313244ff}}
   right:
+    - network:
+        poll-interval: 2000
+        content:
+          map:
+            default: {empty: {}}
+            conditions:
+              name == enp8s0:
+                map:
+                  default: {string: {text: , font: *base_font, right-margin: 10}}
+                  conditions:
+                    state == down: {string: {text: , font: *base_font, right-margin: 10}}
+                    state == up:
+                      map:
+                        default:
+                          - string: {text: , font: *base_font, right-margin: 10}
+                          - string: {text: "{dl-speed:mb}/{ul-speed:mb} Mb/s"}
+
+                        conditions:
+                          ipv4 == "":
+                            - string: {text: , font: *base_font, right-margin: 10}
+                            - string: {text: "{dl-speed:mb}/{ul-speed:mb} Mb/s"}
     - clock:
         content:
           - string: {text: , font: *base_font, right-margin: 10}
           - string: {text: "{date}", right-margin: 10}
           - string: {text: , font: *base_font, right-margin: 10}
-          - string: {text: "{time}", right-margin: 10}
+          - string: {text: "{time}"}
