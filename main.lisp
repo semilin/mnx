@@ -21,16 +21,10 @@
 
 (defun manage-pacman ()
   (let* ((installed (pacman-get-installed))
-	 (unneeded (remove-if (lambda (e) (member e *pacman-packages* :test 'equal)) installed))
-	 (new (remove-if (lambda (e) (member e installed :test 'equal)) *pacman-packages*)))
-    (cond (unneeded
-	   (format t "Removing ~a packages (~a)~%" (length unneeded) unneeded)
-	   (pacman-remove-packages unneeded)))
-    (let ((orphans (pacman-get-orphans)))
-      (cond (orphans
-	     (format t "Removing ~a orphaned packages (~a)~%" (length orphans) orphans)
-	     (pacman-remove-packages orphans))))
-    (uiop:run-program (append '("pacman" "-Syyu") (if new (list (format nil "~{~a~^ ~}" new)) ()))
+	 (new (remove-if (lambda (e) (member e installed :test 'equal)) *pacman-packages*))
+	 (packagestring (format nil "~{~a~^ ~}" new)))
+    (format t "~A~%" packagestring)
+    (uiop:run-program (append '("pacman" "-Syu" "--needed") (if new (list packagestring) ()))
 		      :input :interactive :output :interactive)))
 
 (defun manage-packages ()

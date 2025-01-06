@@ -12,6 +12,35 @@
                                    ("someday.org" :maxlevel . 2)
                                    ("wellbeing.org" :maxlevel . 2)
                                    ("events.org" :maxlevel . 1))))
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)
+     (lisp . t)))
+
+  (setq org-latex-pdf-process
+        (let
+            ((cmd (concat "pdflatex -shell-escape -interaction nonstopmode"
+                          " --synctex=1"
+                          " -output-directory %o %f")))
+          (list cmd
+                "cd %o; if test -r %b.idx; then makeindex %b.idx; fi"
+                "cd %o; bibtex %b"
+                cmd
+                cmd)))
+
+  (setq org-latex-title-command
+        "\\begin{flushleft}%a
+
+%D
+
+%d
+\\end{flushleft}
+\\begin{center}%t\\end{center}
+\\par")
+
+  (setq org-clock-sound "~/doc/audio/sfx/bell.wav")
+  
   :bind (("C-c c" . org-capture)
          ("C-c a" . org-agenda))
   :hook ((org-mode . org-toggle-pretty-entities))
@@ -48,26 +77,33 @@
 ;;   (setq org-recur-finish-done t
 ;;    org-recur-finish-archive t))
 
-(use-package org-roam
-  :ensure t
-  :defer t
-  :init
-  (setq org-roam-v2-ack t)
-  :custom
-  (org-roam-directory "/home/semi/org/nodes")
-  :config
-  (require 'org-roam-protocol))
+(use-package calfw
+  :ensure t)
 
-(use-package org-roam-ui
+(use-package calfw-org
   :ensure t
-  :defer t
-  :init
-  (setq org-roam-v2-ack t)
-  :custom
-  (org-roam-directory (file-truename "~/org/nodes"))
-  :config
-  (require 'org-roam-protocol)
-  :bind (("C-c r u" . org-roam-ui-open)))
+  :after calfw)
+
+;; (use-package org-roam
+;;   :ensure t
+;;   :defer t
+;;   :init
+;;   (setq org-roam-v2-ack t)
+;;   :custom
+;;   (org-roam-directory "/home/semi/org/nodes")
+;;   :config
+;;   (require 'org-roam-protocol))
+
+;; (use-package org-roam-ui
+;;   :ensure t
+;;   :defer t
+;;   :init
+;;   (setq org-roam-v2-ack t)
+;;   :custom
+;;   (org-roam-directory (file-truename "~/org/nodes"))
+;;   :config
+;;   (require 'org-roam-protocol)
+;;   :bind (("C-c r u" . org-roam-ui-open)))
 
 (use-package org-node
   :ensure (:host github :repo "meedstrom/org-node")
@@ -78,7 +114,7 @@
         org-node-extra-id-dirs-exclude '(".sync-conflict-" "/archive/"))
   :bind (("C-c n f" . org-node-find)
          ("C-c n i" . org-node-insert-link)
-         ("C-c n r" . org-node-random))
+         ("C-c n r" . org-node-visit-random))
   :after org)
 
 (use-package org-super-agenda
@@ -86,4 +122,8 @@
   :config
   (org-super-agenda-mode)
   (setq org-super-agenda-groups
-        '((:auto-parent t))))
+        '((:name "Today"
+                 :time-grid t
+                 :date today)
+          (:name "School"
+                 :tag "school"))))

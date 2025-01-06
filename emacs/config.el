@@ -135,6 +135,7 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (use-package rust-mode
   :ensure t
+  :after treesit
   :init
   (setq rust-mode-treesitter-derive t))
 
@@ -167,7 +168,7 @@ Containing LEFT, and RIGHT aligned respectively."
   :custom (corfu-auto t)
   :config
   (global-corfu-mode)
-  (setq corfu-auto-delay 0.0)
+  (setq corfu-auto-delay 0.1)
 
   (add-hook 'eshell-mode-hook
             (lambda ()
@@ -206,14 +207,14 @@ Containing LEFT, and RIGHT aligned respectively."
   :init
   (add-hook 'org-mode-hook
             (lambda ()
-              (setq completion-at-point-functions '(#'cape-file))))
+              (setq completion-at-point-functions (list #'cape-file #'tempel-expand))))
   ;; Add to the global default value of `completion-at-point-functions' which is
   ;; used by `completion-at-point'.  The order of the functions matters, the
   ;; first function returning a result wins.  Note that the list of buffer-local
   ;; completion functions takes precedence over the global list.
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
   ;;(add-to-list 'completion-at-point-functions #'cape-history)
   ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
   ;;(add-to-list 'completion-at-point-functions #'cape-tex)
@@ -261,8 +262,7 @@ Containing LEFT, and RIGHT aligned respectively."
                '((rust-ts-mode rust-mode) .
                  ("rust-analyzer" :initializationOptions
                   (
-                   :check (:command "clippy" :features "all")
-                   :cargo (:features "all"))
+                   :check (:command "clippy" :features "all"))
                   ))))
 
 (use-package ligature
@@ -288,7 +288,7 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (use-package orderless
   :ensure t
-  :init (setq completion-styles '(orderless basic)
+  :init (setq completion-styles '(orderless basic partial-completion)
 	            completion-category-defaults nil
 	            completion-category-overrides ''(file (styles partial-completion))))
 
@@ -374,8 +374,12 @@ Containing LEFT, and RIGHT aligned respectively."
   :init (setq avy-keys '(?s ?r ?n ?t ?d ?a ?i ?h ?m ?g ?l ?o ?b ?, ?j ?>))
   :bind ("C-," . avy-goto-word-1))
 
+(use-package dashboard-hackernews
+  :ensure t)
+
 (use-package dashboard
   :ensure t
+  :after dashboard-hackernews
   :config
   (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
   (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
@@ -383,8 +387,13 @@ Containing LEFT, and RIGHT aligned respectively."
   (setq dashboard-center-content t)
   ;; vertically center content
   (setq dashboard-vertically-center-content t)
+  (setq dashboard-items '((recents . 3) (agenda . 5) (hackernews . 5)))
+  (dashboard-setup-startup-hook)
   :demand t
   )
+
+(use-package exercism
+  :ensure t)
 
 ;; (use-package telephone-line
 ;;   :config (telephone-line-mode +1))
@@ -404,6 +413,9 @@ Containing LEFT, and RIGHT aligned respectively."
 (use-package aggressive-indent
   :ensure t
   :hook ((lisp-mode emacs-lisp-mode scheme-mode hy-mode) . aggressive-indent-mode))
+
+(use-package transient
+  :ensure t)
 
 (use-package magit
   :ensure t
@@ -449,6 +461,7 @@ Containing LEFT, and RIGHT aligned respectively."
                (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src"))
                (yaml . ("https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0"))
                (go "https://github.com/tree-sitter/tree-sitter-go")
+               (rust "https://github.com/tree-sitter/tree-sitter-rust")
                (c "https://github.com/tree-sitter/tree-sitter-c")
                (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
                (c3 "https://github.com/c3lang/tree-sitter-c3")))
@@ -521,27 +534,27 @@ Containing LEFT, and RIGHT aligned respectively."
 			                  :stream t                           
 			                  :models '("gemma2:latest" "llama3:latest"))))
 
-(use-package consult-omni
-  :ensure (:host github :repo "armindarvish/consult-omni" :branch "main")
-  :after consult
-  :custom
-  ;; General settings that apply to all sources
-  (consult-omni-show-preview t) ;;; show previews
-  (consult-omni-preview-key "C-o") ;;; set the preview key to C-o
-  :config
-  ;; Load Sources Core code
-  (require 'consult-omni-sources)
-  ;; Load Embark Actions
-  (require 'consult-omni-embark)
+;; (use-package consult-omni
+;;   :ensure (:host github :repo "armindarvish/consult-omni" :branch "main")
+;;   :after consult
+;;   :custom
+;;   ;; General settings that apply to all sources
+;;   (consult-omni-show-preview t) ;;; show previews
+;;   (consult-omni-preview-key "C-o") ;;; set the preview key to C-o
+;;   :config
+;;   ;; Load Sources Core code
+;;   (require 'consult-omni-sources)
+;;   ;; Load Embark Actions
+;;   (require 'consult-omni-embark)
 
-  ;; Only load wikipedia source
-  (setq consult-omni-sources-modules-to-load (list 'consult-omni-calc 'consult-omni-gptel 'consult-omni-fd 'consult-omni-wikipedia))
-  (consult-omni-sources-load-modules)
+;;   ;; Only load wikipedia source
+;;   (setq consult-omni-sources-modules-to-load (list 'consult-omni-calc 'consult-omni-gptel 'consult-omni-fd 'consult-omni-wikipedia))
+;;   (consult-omni-sources-load-modules)
 
-  (setq consult-omni-multi-sources '("calc" "Org Agenda" "Wikipedia"))
+;;   (setq consult-omni-multi-sources '("calc" "Org Agenda" "Wikipedia"))
 
-  ;;; Set your shorthand favorite interactive command
-  (setq consult-omni-default-interactive-command #'consult-omni-wikipedia))
+;;   ;;; Set your shorthand favorite interactive command
+;;   (setq consult-omni-default-interactive-command #'consult-omni-wikipedia))
 
 ;; (use-package elisa
 ;;   :init
@@ -569,6 +582,8 @@ Containing LEFT, and RIGHT aligned respectively."
 (use-package activities
   :ensure t
   :init
+  (setq tab-bar-new-button-show nil
+        tab-bar-close-button-show nil)
   (activities-mode)
   (activities-tabs-mode)
   :bind (("C-c v n" . activities-new)
@@ -581,6 +596,12 @@ Containing LEFT, and RIGHT aligned respectively."
 	       ("C-c v f" . activities-switch-buffer)
 	       ("C-c v g" . activities-revert)
 	       ("C-c v l" . activities-list)))
+
+(use-package jinx
+  :ensure t
+  :hook (org-mode . jinx-mode)
+  :bind (("C-x j" . jinx-correct-nearest)
+         ("C-x M-j" . jinx-correct-all)))
 
 (use-package zoom
   :ensure t

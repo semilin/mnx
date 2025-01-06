@@ -6,8 +6,6 @@ if status is-interactive
     function fish_greeting
     end
 
-    pyenv init - | source
-
     alias ls "exa --icons"
     alias ll "ls -l"
     alias l "ls"

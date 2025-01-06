@@ -7,9 +7,10 @@
     ("emacs/functions.el" . "/home/semi/.config/emacs/functions.el")
     ("emacs/elpaca.el" . "/home/semi/.config/emacs/elpaca.el")
 
-    ("configs/tofi.conf" . "/home/semi/.config/tofi/config")
+    ("configs/tofi.conf" . "/home/semi/.config/tofi.conf")
     ("configs/yambar.yml" . "/home/semi/.config/yambar/config.yml")
     ("configs/config.fish" . "/home/semi/.config/fish/config.fish")
     ("configs/alacritty.toml" . "/home/semi/.config/alacritty.toml")
-
+    ("configs/foot.ini" . "/home/semi/.config/foot/foot.ini")
+    ("configs/river" . "/home/semi/.config/river/init")
     ("configs/profile" . "/home/semi/.profile")))

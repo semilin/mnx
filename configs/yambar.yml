@@ -1,7 +1,7 @@
-base_font: &base_font Iosevka Nerd Font:pixelsize=14
+base_font: &base_font Iosevka Nerd Font:pixelsize=20
 bg_default: &bg_default {stack: [{background: {color: 181825ff}}, {underline: {size: 4, color: b4befeff}}]}
 bar:
-  height: 20
+  height: 24
   location: top
   font: base_font
   spacing: 10
@@ -65,7 +65,7 @@ bar:
           map:
             default: {empty: {}}
             conditions:
-              name == enp8s0:
+              name == wlan0:
                 map:
                   default: {string: {text: , font: *base_font, right-margin: 10}}
                   conditions:
@@ -74,15 +74,15 @@ bar:
                       map:
                         default:
                           - string: {text: , font: *base_font, right-margin: 10}
-                          - string: {text: "{dl-speed:mb}/{ul-speed:mb} Mb/s"}
+                          - string: {text: "{dl-speed:mb}/{ul-speed:mb} Mb/s", font: *base_font}
 
                         conditions:
                           ipv4 == "":
                             - string: {text: , font: *base_font, right-margin: 10}
-                            - string: {text: "{dl-speed:mb}/{ul-speed:mb} Mb/s"}
+                            - string: {text: "{dl-speed:mb}/{ul-speed:mb} Mb/s", font: *base_font}
     - clock:
         content:
           - string: {text: , font: *base_font, right-margin: 10}
-          - string: {text: "{date}", right-margin: 10}
+          - string: {text: "{date}", font: *base_font, right-margin: 10}
           - string: {text: , font: *base_font, right-margin: 10}
-          - string: {text: "{time}"}
+          - string: {text: "{time}", font: *base_font}

@@ -20,6 +20,8 @@ set $term foot
 # on the original workspace that the command was run on.
 set $menu tofi-drun | wmenu | xargs swaymsg exec --
 
+font pango:monospace 12
+
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)

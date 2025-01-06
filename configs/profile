@@ -1,5 +1,12 @@
 export EDITOR="emacsclient -c"
 export GOPATH="$HOME/.local/share/go"
-export PATH="$GOPATH/bin:$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+export FLUTTERPATH="$HOME/code/flutter"
+export ANDROID_HOME="$HOME/code/src/android"
+export PATH="$FLUTTERPATH/bin:$GOPATH/bin:$HOME/.local/bin:$HOME/.cargo/bin:/opt/emacs/bin:$PATH"
 export PYTORCH_ROCM_ARCH=gfx1030 HSA_OVERRIDE_GFX_VERSION=10.3.0
 export OLLAMA_MODELS=~/.local/share/ollama/models
+
+export QT_AUTO_SCREEN_SCALE_FACTOR=0
+export QT_ENABLE_HIGHDPI_SCALING=0
+export QT_SCALE_FACTOR=1.5
+export GDK_DPI_SCALE=1.5

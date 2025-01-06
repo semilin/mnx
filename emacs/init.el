@@ -1,18 +1,24 @@
+(setq native-comp-speed 3)
+
 (let ((scale 1.0))
   (set-face-attribute 'default nil
 		                  :font "Iosevka Nerd Font"
-		                  :height (round (* scale 120)))
+		                  :height (round (* scale 140)))
 
   (set-face-attribute 'fixed-pitch nil
 		                  :font "Iosevka Nerd Font"
-		                  :height (round (* scale 120)))
+		                  :height (round (* scale 140)))
 
   (set-face-attribute 'variable-pitch nil
 		                  :font "SourceSans3"
-		                  :height (round (* scale 120))))
+		                  :height (round (* scale 140))))
 
 (defvar default-font "Iosevka Nerd Font")
-(add-to-list 'default-frame-alist `(font . ,default-font))
+(setq default-frame-alist '((cursor-color . "white")
+			                      (vertical-scroll-bars . nil)
+			                      `(font . ,default-font)))
+
+
 
 (load-file "~/.config/emacs/elpaca.el")
 
@@ -74,10 +80,6 @@
 (use-package catppuccin-theme
   :ensure t
   :config (load-theme 'catppuccin 't))
-
-(setq default-frame-alist '((cursor-color . "white")
-			    (vertical-scroll-bars . nil)
-			    (font . "Iosevka Nerd Font")))
 
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
